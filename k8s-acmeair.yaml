@@ -1,0 +1,477 @@
+##### sessiondb  #####
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    service: session-db1
+  name: session-db1
+spec:
+  ports:
+  - name: "27017"
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    service: session-db1
+status:
+  loadBalancer: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: session-db1
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: session-db1
+    spec:
+      containers:
+      - image: jjacobso/mongodb-ppc64le:latest
+        name: session-db1
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
+---
+##### bookingdb  #####
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    service: booking-db1
+  name: booking-db1
+spec:
+  ports:
+  - name: "27017"
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    service: booking-db1
+status:
+  loadBalancer: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: booking-db1
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: booking-db1
+    spec:
+      containers:
+      - image: jjacobso/mongodb-ppc64le:latest
+        name: booking-db1
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
+---
+##### customerdb #####
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    service: customer-db1
+  name: customer-db1
+spec:
+  ports:
+  - name: "27017"
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    service: customer-db1
+status:
+  loadBalancer: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: customer-db1
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: customer-db1
+    spec:
+      containers:
+      - image: jjacobso/mongodb-ppc64le:latest
+        name: customer-db1
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
+---
+##### flightdb #####
+apiVersion: v1
+kind: Service
+metadata:
+  creationTimestamp: null
+  labels:
+    service: flight-db1
+  name: flight-db1
+spec:
+  ports:
+  - name: "27017"
+    port: 27017
+    protocol: TCP
+    targetPort: 27017
+  selector:
+    service: flight-db1
+status:
+  loadBalancer: {}
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  creationTimestamp: null
+  name: flight-db1
+spec:
+  replicas: 1
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: flight-db1
+    spec:
+      containers:
+      - image: jjacobso/mongodb-ppc64le:latest
+        name: flight-db1
+        ports:
+        - containerPort: 27017
+          protocol: TCP
+        resources: {}
+      restartPolicy: Always
+status: {}
+---
+###### Main Service ######
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mainservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: main-deployment
+    spec:
+      containers:
+        - name: mainservice-java
+          image: acmeair-main 
+          ports:
+            - containerPort: 80
+          imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: main-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+  selector:
+    name: main-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /
+  name: main-ingress
+spec:
+  rules:
+  - host: pkb-ubuntu14-2
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: main-service
+          servicePort: 80
+---
+### flight service
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: flightservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: flight-deployment
+    spec:
+      containers:
+      - env:
+        - name: MONGO_HOST
+          value: $(FLIGHT_DB1_SERVICE_HOST) 
+        - name: MONGO_DBNAME
+          value: acmeair_flightdb
+        name: flightservice-java
+        image: acmeair-fs 
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flight-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+  selector:
+    name: flight-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-fs
+  name: flight-ingress
+spec:
+  rules:
+  - host: pkb-ubuntu14-2
+    http:
+      paths:
+      - path: /flight/acmeair-fs
+        backend:
+          serviceName: flight-service
+          servicePort: 80
+---
+### auth service
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: authservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: auth-deployment
+    spec:
+      containers:
+      - env:
+        - name: CUSTOMER_SERVICE
+          value: $(CUSTOMER_SERVICE_SERVICE_HOST):$(CUSTOMER_SERVICE_SERVICE_PORT)/acmeair-cs 
+        - name: MONGO_HOST
+          value: $(SESSION_DB1_SERVICE_HOST)
+          #value: $(CUSTOMER_DB1_SERVICE_HOST)
+        - name: MONGO_DBNAME
+          value: acmeair_sessiondb
+          #value: acmeair_customerdb
+        name: authservice-java
+        image: acmeair-as 
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: auth-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+  selector:
+    name: auth-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-as
+  name: auth-ingress
+spec:
+  rules:
+  - host: pkb-ubuntu14-2
+    http:
+      paths:
+      - path: /auth/acmeair-as
+        backend:
+          serviceName: auth-service
+          servicePort: 80
+---
+### booking service
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: bookingservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: booking-deployment
+    spec:
+      containers:
+      - env:
+        - name: AUTH_SERVICE
+          value: $(AUTH_SERVICE_SERVICE_HOST):$(AUTH_SERVICE_SERVICE_PORT)/acmeair-as 
+        - name: MONGO_HOST
+          value: $(BOOKING_DB1_SERVICE_HOST) 
+        - name: MONGO_DBNAME
+          value: acmeair_bookingdb
+        name: bookingservice-java
+        image: acmeair-bs 
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: booking-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+  selector:
+    name: booking-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-bs
+  name: booking-ingress
+spec:
+  rules:
+  - host: pkb-ubuntu14-2
+    http:
+      paths:
+      - path: /booking/acmeair-bs
+        backend:
+          serviceName: booking-service
+          servicePort: 80
+---
+### customer service
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: customerservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: customer-deployment
+    spec:
+      containers:
+      - env:
+        - name: AUTH_SERVICE
+          value: $(AUTH_SERVICE_SERVICE_HOST):$(AUTH_SERVICE_SERVICE_PORT)/acmeair-as
+        - name: MONGO_HOST
+          value: $(CUSTOMER_DB1_SERVICE_HOST) 
+        - name: MONGO_DBNAME
+          value: acmeair_customerdb
+        name: customerservice-java
+        image: acmeair-cs 
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: customer-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+  selector:
+    name: customer-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-cs
+  name: customer-ingress
+spec:
+  rules:
+  - host: pkb-ubuntu14-2
+    http:
+      paths:
+      - path: /customer/acmeair-cs
+        backend:
+          serviceName: customer-service
+          servicePort: 80
+
+---
+### support service
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: supportservice
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        name: supportservice-deployment
+    spec:
+      containers:
+      - name: supportservice-java
+        image: acmeair-ss
+        ports:
+          - containerPort: 80
+        imagePullPolicy: IfNotPresent
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: support-service
+  namespace: default
+spec:
+  ports:
+    - port: 80
+  selector:
+    name: supportservice-deployment
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-ss
+  name: support-ingress
+spec:
+  rules:
+  - host: pkb-ubuntu14-2
+    http:
+      paths:
+      - path: /support/acmeair-ss
+        backend:
+          serviceName: support-service
+          servicePort: 80
+
