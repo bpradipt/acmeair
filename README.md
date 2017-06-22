@@ -31,4 +31,22 @@ Source:
 * NOTE: DO NOT use acmeair.properties file to configure database unless there is specific needs.  Use Service Bridge for Mongo DB to get good performance results (When using acmeair.properties file, make sure to configure every DB options properly - if only setting up the hostname, port number & credentials, it will give poor performance)
 
 
+## Deploying in a Heterogeneous cluster consisting of Intel and PowerPC LE (ppc64le) nodes
 
+Refer to the sample YAML file - k8s-acmeair-multiarch.yaml and ensure you replace the variable DNS_HOST_NAME_OF_PROXY_NODE 
+with the DNS name of the ingress/proxy node. For example if vm1 is the DNS name of the proxy node in your setup then all occurrences of
+the following string **host: <DNS_HOST_NAME_OF_PROXY_NODE>** should be changed to **host: vm1**
+
+You'll also need to modify the image location as per your environment and create a Kubernetes secret named 'regsecret' to enable the 
+nodes to pull the images from the registry
+
+By default two mongodb PODs will be deployed on Intel nodes using the following construct
+nodeSelector:
+        beta.kubernetes.io/arch: amd64
+Rest of the PODs will be deployed on PowerPC LE nodes using the following construct
+nodeSelector:
+        beta.kubernetes.io/arch: ppc64le
+
+You can change the configs as required.
+
+Once the app is deployed, you can access it at <DNS_HOST_NAME_OF_PROXY_NODE>/acmeair
