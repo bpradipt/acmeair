@@ -184,7 +184,7 @@ spec:
     spec:
       containers:
         - name: mainservice-java
-          image: acmeair-main 
+          image: acmeair-mainapp 
           ports:
             - containerPort: 80
           imagePullPolicy: IfNotPresent
