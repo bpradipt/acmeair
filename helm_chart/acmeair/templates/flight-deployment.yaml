@@ -1,0 +1,28 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.flightService.name }} 
+  name: {{ .Values.flightService.name }}  
+spec:
+  replicas: {{ .Values.flightService.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.flightService.name }}  
+    spec:
+      containers:
+      - env:
+        - name: MONGO_HOST
+          value: {{ .Values.flightDB.name }}  
+        - name: MONGO_DBNAME
+          value: {{ .Values.flightDB.dbName }} 
+        image: {{ .Values.flightService.image }}  
+        ports:
+         - containerPort: {{ .Values.flightService.port }} 
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        name: {{ .Values.flightService.name }}  
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

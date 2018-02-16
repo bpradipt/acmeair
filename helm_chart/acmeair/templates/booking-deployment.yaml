@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.bookingService.name }} 
+  name: {{ .Values.bookingService.name }} 
+spec:
+  replicas: {{ .Values.bookingService.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.bookingService.name }} 
+    spec:
+      containers:
+      - env:
+        - name: AUTH_SERVICE
+          value: {{ .Values.authService.name }}:{{ .Values.authService.port  }}/acmeair-as 
+        - name: MONGO_HOST
+          value: {{ .Values.bookingDB.name }} 
+        - name: MONGO_DBNAME
+          value: {{ .Values.bookingDB.dbName }} 
+        image: {{ .Values.bookingService.image }} 
+        name: {{ .Values.bookingService.name }} 
+        ports:
+          - containerPort: {{ .Values.bookingService.port }} 
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.customerDB.name }} 
+  name: {{ .Values.customerDB.name }} 
+spec:
+  replicas: {{ .Values.customerDB.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.customerDB.name }} 
+    spec:
+      containers:
+      - image: {{ .Values.customerDB.image }} 
+        name: {{ .Values.customerDB.name }} 
+        ports:
+        - containerPort: {{ .Values.customerDB.port }} 
+          protocol: TCP
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.sessionDB.name }} 
+  name: {{ .Values.sessionDB.name }} 
+spec:
+  replicas: {{ .Values.sessionDB.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.sessionDB.name }} 
+    spec:
+      containers:
+      - image: {{ .Values.sessionDB.image }} 
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        name: {{ .Values.sessionDB.name }} 
+        ports:
+        - containerPort: {{ .Values.sessionDB.port }}
+          protocol: TCP
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

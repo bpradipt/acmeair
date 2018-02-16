@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.bookingDB.name }} 
+  name: {{ .Values.bookingDB.name }} 
+spec:
+  ports:
+  - name: "{{ .Values.bookingDB.port }}" 
+    port: {{ .Values.bookingDB.port }} 
+    protocol: TCP
+    targetPort: {{ .Values.bookingDB.port }} 
+  selector:
+    service: {{ .Values.bookingDB.name }} 

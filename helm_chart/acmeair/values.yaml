@@ -1,0 +1,95 @@
+arch:
+  ppc64le: "3 - Most preferred"
+  amd64: "0 - Do not use"
+  s390x: "0 - Do not use"
+
+image:
+  pullPolicy: "Never"
+  restartPolicy: "Always"
+
+authService:
+  name: "auth-service"
+  image: "acmeair_auth_service_liberty1:latest"
+  replicas: 1
+  port: 80
+
+bookingService:
+  name: "booking-service"
+  image: "acmeair_booking_service_liberty1:latest" 
+  replicas: 1
+  port: 80
+
+customerService:
+  name: "customer-service"
+  image: "acmeair_customer_service_liberty1:latest"
+  replicas: 1
+  port: 80
+
+mainService:
+  name: "main-service"
+  image: "acmeair_main_service_liberty1:latest"
+  replicas: 1
+  port: 80
+
+flightService:
+  name: "flight-service"
+  image: "acmeair_flight_service_liberty1:latest"
+  replicas: 1
+  port: 80
+
+supportService:
+  name: "support-service"
+  image: "acmeair_support_service_liberty1:latest"
+  replicas: 1
+  port: 80
+
+custIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+authIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+bookingIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+flightIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+mainIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+supportIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+bookingDB:
+  name: "booking-db1"
+  dbName: "acmeair_bookingdb"
+  image: "jjacobso/mongodb-ppc64le:latest"
+  port: 27017
+  replicas: 1
+
+customerDB:
+  name: "customer-db1"
+  dbName: "acmeair_customerdb"
+  image: "jjacobso/mongodb-ppc64le:latest"
+  port: 27017
+  replicas: 1
+
+flightDB:
+  name: "flight-db1"
+  dbName: "acmeair_flightdb"
+  image: "jjacobso/mongodb-ppc64le:latest"
+  port: 27017
+  replicas: 1
+
+sessionDB:
+  name: "session-db1"
+  image: "jjacobso/mongodb-ppc64le:latest"
+  port: 27017
+  replicas: 1

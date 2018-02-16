@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.flightService.name }} 
+  name: {{ .Values.flightService.name }} 
+spec:
+  ports:
+  - port: {{ .Values.flightService.port }} 
+  selector:
+    service: {{ .Values.flightService.name }} 
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-fs
+  name: flight-ingress
+spec:
+  rules:
+  - host: {{ .Values.flightIngress.host }} 
+    http:
+      paths:
+      - path: /flight/acmeair-fs
+        backend:
+          serviceName: {{ .Values.flightService.name }} 
+          servicePort: {{ .Values.flightService.port }} 

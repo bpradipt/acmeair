@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.flightDB.name }}
+  name: {{ .Values.flightDB.name }} 
+spec:
+  replicas: {{ .Values.flightDB.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.flightDB.name }} 
+    spec:
+      containers:
+      - image: {{ .Values.flightDB.image }} 
+        name: {{ .Values.flightDB.name }}
+        ports:
+        - containerPort: {{ .Values.flightDB.port }} 
+          protocol: TCP
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

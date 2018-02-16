@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.flightDB.name }} 
+  name: {{ .Values.flightDB.name }} 
+spec:
+  ports:
+  - name: "{{ .Values.flightDB.port }}" 
+    port: {{ .Values.flightDB.port }} 
+    protocol: TCP
+    targetPort: {{ .Values.flightDB.port }} 
+  selector:
+    service: {{ .Values.flightDB.name }} 
