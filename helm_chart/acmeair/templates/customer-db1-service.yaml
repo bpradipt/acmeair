@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.customerDB.name }} 
+  name: {{ .Values.customerDB.name }} 
+spec:
+  ports:
+  - name: "{{ .Values.customerDB.port }}" 
+    port: {{ .Values.customerDB.port }} 
+    protocol: TCP
+    targetPort: {{ .Values.customerDB.port }} 
+  selector:
+    service: {{ .Values.customerDB.name }} 

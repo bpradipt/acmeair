@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service:  {{ .Values.mainService.name }} 
+  name: {{ .Values.mainService.name }} 
+spec:
+  replicas: {{ .Values.mainService.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.mainService.name }} 
+    spec:
+      containers:
+      - image: {{ .Values.mainService.image }} 
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        name: {{ .Values.mainService.name }} 
+        ports:
+        - containerPort: {{ .Values.mainService.port }} 
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

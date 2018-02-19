@@ -1,0 +1,26 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.bookingDB.name }} 
+  name: {{ .Values.bookingDB.name }} 
+spec:
+  replicas: {{ .Values.bookingDB.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.bookingDB.name }} 
+    spec:
+      affinity:
+      {{- include "nodeaffinity" . | indent 6 }}
+      containers:
+      - image: {{ .Values.bookingDB.image }} 
+        name: {{ .Values.bookingDB.name }} 
+        ports:
+        - containerPort: {{ .Values.bookingDB.port }} 
+          protocol: TCP
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

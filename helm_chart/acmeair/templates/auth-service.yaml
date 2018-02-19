@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.authService.name }} 
+  name: {{ .Values.authService.name }} 
+spec:
+  ports:
+  - port: {{ .Values.authService.port }} 
+  selector:
+    service: {{ .Values.authService.name }}
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-as
+  name: auth-ingress
+spec:
+  rules:
+  - host: {{ .Values.authIngress.host }} 
+    http:
+      paths:
+      - path: /auth/acmeair-as
+        backend:
+          serviceName: {{ .Values.authService.name }}
+          servicePort: {{ .Values.authService.port }} 
+

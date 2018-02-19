@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.sessionDB.name }} 
+  name: {{ .Values.sessionDB.name }} 
+spec:
+  ports:
+  - name: "{{ .Values.sessionDB.port }}"
+    port: {{ .Values.sessionDB.port }} 
+    protocol: TCP
+    targetPort: {{ .Values.sessionDB.port }} 
+  selector:
+    service: {{ .Values.sessionDB.name }} 
