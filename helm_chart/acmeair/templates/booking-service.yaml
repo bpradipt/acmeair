@@ -18,7 +18,7 @@ metadata:
   name: booking-ingress
 spec:
   rules:
-  - host: {{ .Values.bookingIngress.host }}  
+  - host: {{ .Values.clusterIngress.host }}  
     http:
       paths:
       - path: /booking/acmeair-bs

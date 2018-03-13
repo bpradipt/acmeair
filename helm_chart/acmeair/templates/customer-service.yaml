@@ -18,7 +18,7 @@ metadata:
   name: customer-ingress
 spec:
   rules:
-  - host: {{ .Values.custIngress.host }}
+  - host: {{ .Values.clusterIngress.host }}
     http:
       paths:
       - path: /customer/acmeair-cs

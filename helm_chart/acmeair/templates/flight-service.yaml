@@ -18,7 +18,7 @@ metadata:
   name: flight-ingress
 spec:
   rules:
-  - host: {{ .Values.flightIngress.host }} 
+  - host: {{ .Values.clusterIngress.host }} 
     http:
       paths:
       - path: /flight/acmeair-fs

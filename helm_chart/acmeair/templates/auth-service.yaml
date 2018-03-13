@@ -18,7 +18,7 @@ metadata:
   name: auth-ingress
 spec:
   rules:
-  - host: {{ .Values.authIngress.host }} 
+  - host: {{ .Values.clusterIngress.host }} 
     http:
       paths:
       - path: /auth/acmeair-as

@@ -18,7 +18,7 @@ metadata:
   name: support-ingress
 spec:
   rules:
-  - host: {{ .Values.supportIngress.host }} 
+  - host: {{ .Values.clusterIngress.host }} 
     http:
       paths:
       - path: /support/acmeair-ss
