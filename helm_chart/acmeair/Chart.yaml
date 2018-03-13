@@ -10,7 +10,7 @@
 
 name: acmeair 
 description: A Sample and Benchmark (wasperf version) application 
-version: 0.0.1
+version: 0.0.2
 keywords:
   - acmeair 
 sources:
