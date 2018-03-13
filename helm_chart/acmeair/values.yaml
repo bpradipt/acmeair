@@ -43,27 +43,7 @@ supportService:
   replicas: 1
   port: 80
 
-custIngress:
-  # The host name must be DNS resolvable
-  host: <DNS_HOST_NAME_OF_PROXY_NODE>
-
-authIngress:
-  # The host name must be DNS resolvable
-  host: <DNS_HOST_NAME_OF_PROXY_NODE>
-
-bookingIngress:
-  # The host name must be DNS resolvable
-  host: <DNS_HOST_NAME_OF_PROXY_NODE>
-
-flightIngress:
-  # The host name must be DNS resolvable
-  host: <DNS_HOST_NAME_OF_PROXY_NODE>
-
-mainIngress:
-  # The host name must be DNS resolvable
-  host: <DNS_HOST_NAME_OF_PROXY_NODE>
-
-supportIngress:
+clusterIngress:
   # The host name must be DNS resolvable
   host: <DNS_HOST_NAME_OF_PROXY_NODE>
 
