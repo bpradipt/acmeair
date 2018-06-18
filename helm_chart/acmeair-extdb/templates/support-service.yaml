@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.supportService.name }} 
+  name: {{ .Values.supportService.name }} 
+spec:
+  ports:
+  - port: {{ .Values.supportService.port }} 
+  selector:
+    service: {{ .Values.supportService.name }} 
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-ss
+  name: support-ingress
+spec:
+  rules:
+  - host: {{ .Values.clusterIngress.host }} 
+    http:
+      paths:
+      - path: /support/acmeair-ss
+        backend:
+          serviceName: {{ .Values.supportService.name }} 
+          servicePort: {{ .Values.supportService.port }} 

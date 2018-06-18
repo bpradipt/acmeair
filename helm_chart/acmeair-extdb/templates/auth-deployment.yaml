@@ -1,0 +1,30 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    service: {{ .Values.authService.name }}
+  name: {{ .Values.authService.name }} 
+spec:
+  replicas: {{ .Values.authService.replicas }} 
+  strategy: {}
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        service: {{ .Values.authService.name }} 
+    spec:
+      containers:
+      - env:
+        - name: CUSTOMER_SERVICE
+          value: {{ .Values.customerService.name }}:{{ .Values.customerService.port }}/acmeair-cs 
+        - name: MONGO_HOST
+          value: {{ .Values.extdbService.name }} 
+        - name: MONGO_DBNAME
+          value: {{ .Values.sessionDB.dbName }}
+        image: {{ .Values.authService.image }}
+        ports:
+          - containerPort: {{ .Values.customerService.port }} 
+        imagePullPolicy: {{ default "IfNotPresent" .Values.image.pullPolicy | quote }}
+        name: {{ .Values.authService.name }}
+        resources: {}
+      restartPolicy: {{ default "Always" .Values.image.restartPolicy | quote }} 

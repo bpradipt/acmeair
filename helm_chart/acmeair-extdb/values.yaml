@@ -1,0 +1,63 @@
+arch:
+  ppc64le: "3 - Most preferred"
+  amd64: "0 - Do not use"
+  s390x: "0 - Do not use"
+
+image:
+  pullPolicy: "Never"
+  restartPolicy: "Always"
+
+authService:
+  name: "auth-service"
+  image: "acmeair-as:latest"
+  replicas: 1
+  port: 80
+
+bookingService:
+  name: "booking-service"
+  image: "acmeair-bs:latest" 
+  replicas: 1
+  port: 80
+
+customerService:
+  name: "customer-service"
+  image: "acmeair-cs:latest"
+  replicas: 1
+  port: 80
+
+mainService:
+  name: "main-service"
+  image: "acmeair-mainapp:latest"
+  replicas: 1
+  port: 80
+
+flightService:
+  name: "flight-service"
+  image: "acmeair-fs:latest"
+  replicas: 1
+  port: 80
+
+supportService:
+  name: "support-service"
+  image: "acmeair-ss:latest"
+  replicas: 1
+  port: 80
+
+clusterIngress:
+  # The host name must be DNS resolvable
+  host: <DNS_HOST_NAME_OF_PROXY_NODE>
+
+bookingDB:
+  dbName: "acmeair_bookingdb"
+
+customerDB:
+  dbName: "acmeair_customerdb"
+
+flightDB:
+  dbName: "acmeair_flightdb"
+
+sessionDB:
+  dbName: "acmeair_sessiondb"
+
+extdbService:
+  name: "db-service"

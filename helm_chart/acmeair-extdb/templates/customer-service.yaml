@@ -1,0 +1,27 @@
+aiversion: v1
+kind: Service
+metadata:
+  labels:
+    service: {{ .Values.customerService.name }} 
+  name: {{ .Values.customerService.name }} 
+spec:
+  ports:
+  - port: {{ .Values.customerService.port }} 
+  selector:
+    service: {{ .Values.customerService.name }} 
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    ingress.kubernetes.io/rewrite-target: /acmeair-cs
+  name: customer-ingress
+spec:
+  rules:
+  - host: {{ .Values.clusterIngress.host }}
+    http:
+      paths:
+      - path: /customer/acmeair-cs
+        backend:
+          serviceName: {{ .Values.customerService.name }} 
+          servicePort: {{ .Values.customerService.port }} 
